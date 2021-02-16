@@ -1,0 +1,75 @@
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int perevod_second(int a, string& stroka2) //перевод в двоичный код
+{
+    int b = 0;
+    for(int j=0; a>0; j++)
+    {
+        b = b + (a%2) * pow(10, j);
+        a = a / 2;
+    }
+    stroka2 = stroka2 + to_string(b);
+}
+
+int main()
+{
+    int A[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+    int B[8] = {8, 9, 10, 11, 12, 13, 14, 15};
+    int C[8] = {15, 14, 13, 12, 11, 10, 9, 8};
+    int D[8] = {7, 6, 5, 4, 3, 2, 1, 0};
+    
+    int check = 0; //для проверки на кратность 512
+    int h = 0; //сам хэш
+    
+    string stroka;
+    string stroka2;
+    string s1 = "0";
+    int temp; // промежуточная строка для деления на шаблоны
+    
+    cout << "Введите пароль " << endl;
+    cin >> stroka;
+    
+    int n = stroka.length();
+    char char_stroka[n + 1];
+    strcpy(char_stroka, stroka.c_str()); //перевод с string в char 
+    
+    for(int i = 0; i < n + 1; i++)
+    {
+        char_stroka[i] = (int)char_stroka[i];
+        perevod_second(char_stroka[i], stroka2);
+        //stroka2 = stroka2 + to_string(perevod_second(char_stroka[i]));
+    }
+    stroka2.erase(stroka2.length() - 1, 1);
+    //cout << stroka2.erase(stroka2.length() - 1, 1) << endl;
+    
+    check = stroka2.length() % 512;
+    do
+    {
+        stroka2 = stroka2 + s1;
+        check = stroka2.length() % 512;
+    }
+    while (check != 0);
+    
+    int n1 = stroka2.length() / 512; //количество шаблонов
+    int mas[n1]; // массив с шаблонами
+    temp = stoi(stroka2);
+    
+    for(int i = 0; i < n1; i++)
+    {
+        mas[n1 - i] =  temp % 512;
+        temp = temp / 512;
+    }
+    
+    for(int i = 0; i<16; i++)
+    {
+        for(int j = 0; j<8; j++)
+        {
+            h = h + (A[j] * pow(mas[i], 0) + B[j] * pow(mas[i], 1) + C[j] * pow(mas[i], 2) + D[j] * pow(mas[i], 3));
+        }
+    }
+    cout << "Полученный хэш: "<< h << endl; ;
+}
